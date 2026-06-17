@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/fscherf/boringjs/issues"
   },
-  "homepage": "https://github.com/fscherf/boringjs/blob/master/README.md"
+  "homepage": "https://github.com/fscherf/boringjs/blob/master/README.md",
+  "files": [
+    "src/*/*",
+    "dist/*/*"
+  ]
 }
