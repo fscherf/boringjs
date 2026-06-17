@@ -1,0 +1,14 @@
+services:
+  node:
+    build:
+      context: .
+      dockerfile: node.Dockerfile
+
+    hostname: node
+
+    volumes:
+      - ${HOME}/.npmrc/:/home/node/.npmrc
+      - ./:/app
+
+    user: 1000:1000
+    working_dir: /app
