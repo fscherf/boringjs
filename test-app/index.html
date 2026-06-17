@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>boring.js</title>
+  </head>
+  <body>
+    <main></main>
+
+    <template name="index">
+      <h1>boring.js</h1>
+
+      {% include "greeting" %}
+      <ul>
+        <li><a href="/foo/">foo</a></li>
+        <li><a href="/bar/">bar</a></li>
+      </ul>
+
+      <form>
+        {% if value %}
+          <input id="name" value="{{ value }}">
+        {% else %}
+          <input id="name">
+        {% endif %}
+      </form>
+
+      <button onclick="boring.render('main')">Render</button>
+    </template>
+
+    <template name="foo">
+      <h1>foo</h1>
+    </template>
+
+    <template name="bar">
+      <h1>bar</h1>
+    </template>
+
+    <template name="error-404">
+      <h1>404</h1>
+    </template>
+
+    <script src="/static/dist/boring.js"></script>
+    <script>
+      const context = {
+        name: "World",
+      };
+
+      boring.addRegion("main", "main")
+
+      boring.addRoute("/foo", (params) => {
+        boring.render("main", "foo");
+      });
+
+      boring.addRoute("/bar", (params) => {
+        boring.render("main", "bar");
+      });
+
+      boring.addRoute("/", async (params) => {
+        await boring.render("main", "index");
+      }, "index");
+
+      boring.addRoute("/users/:user/about", async (params) => {
+        console.log(params);
+      }, "user");
+
+      // boring.addRoute("*path", (params) => {
+      //   boring.render("main", "error-404");
+      // });
+
+      document.addEventListener("boring:event", event => {
+        console.log(event.detail.event.type, event.detail.event.detail);
+      }, true);
+
+      document.addEventListener("boring:routing-miss", async (event) => {
+        await boring.render("main", "error-404");
+      });
+
+      boring.route();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+  </body>
+</html>

@@ -12,3 +12,14 @@ services:
 
     user: 1000:1000
     working_dir: /app
+
+  nginx:
+    image: nginx:latest
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./dist:/var/www/static/dist
+      - ./test-app:/var/www
+
+    ports:
+      - 8080:80

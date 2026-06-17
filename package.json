@@ -2,9 +2,14 @@
   "name": "boringjs",
   "version": "0.0.1",
   "description": "boring.js",
-  "main": "boring.js",
+  "main": "dist/boring.js",
+  "types": "dist/boring.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "_install": "test -d node_modules || npm install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run _install && webpack build && tsc --project tsconfig.declarations.json",
+    "watch": "npm run _install && webpack watch --mode=development",
+    "lint": "npm run _install && prettier --write ./src"
   },
   "repository": {
     "type": "git",
@@ -17,7 +22,19 @@
   },
   "homepage": "https://github.com/fscherf/boringjs/blob/master/README.md",
   "files": [
-    "src/*/*",
-    "dist/*/*"
-  ]
+    "src/**",
+    "dist/**"
+  ],
+  "devDependencies": {
+    "@types/nunjucks": "^3.2.6",
+    "morphdom": "^2.7.8",
+    "path-to-regexp": "8.4.2",
+    "npm-check-updates": "^22.2.3",
+    "nunjucks": "^3.2.4",
+    "prettier": "^3.8.4",
+    "ts-loader": "^9.6.0",
+    "typescript": "^6.0.3",
+    "webpack": "^5.107.2",
+    "webpack-cli": "^7.0.3"
+  }
 }

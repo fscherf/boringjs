@@ -1,4 +1,7 @@
-.PHONY: shell
+.PHONY: \
+	all \
+	shell build watch lint \
+	server-start server-stop
 
 define DOCKER_COMPOSE_RUN
 	docker compose run \
@@ -15,5 +18,24 @@ define DOCKER_COMPOSE_UP
 		$1
 endef
 
+all: watch
+
+# node
 shell:
 	$(call DOCKER_COMPOSE_RUN,node,/bin/bash)
+
+build:
+	$(call DOCKER_COMPOSE_RUN,node,npm run build)
+
+watch:
+	$(call DOCKER_COMPOSE_RUN,node,npm run watch)
+
+lint:
+	$(call DOCKER_COMPOSE_RUN,node,npm run lint)
+
+# nginx
+server-start:
+	$(call DOCKER_COMPOSE_UP,-d nginx)
+
+server-stop:
+	docker compose down nginx
