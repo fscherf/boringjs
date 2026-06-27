@@ -1,5 +1,6 @@
 import morphdom from "morphdom";
 import nunjucks from "nunjucks";
+import Cookies from "js-cookie";
 
 import {
   BoringRoute,
@@ -40,6 +41,8 @@ export class Boring {
   public regions: Map<string, BoringRegion>;
   public routes: Array<BoringRoute>;
   public routesByName: Map<string, BoringRoute>;
+
+  public cookies: any = Cookies;
 
   constructor() {
     this.config = {

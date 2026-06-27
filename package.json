@@ -25,11 +25,13 @@
     "dist/**"
   ],
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/nunjucks": "^3.2.6",
+    "js-cookie": "^3.0.8",
     "morphdom": "^2.7.8",
-    "path-to-regexp": "8.4.2",
     "npm-check-updates": "^22.2.3",
     "nunjucks": "^3.2.4",
+    "path-to-regexp": "8.4.2",
     "prettier": "^3.8.4",
     "ts-loader": "^9.6.0",
     "typescript": "^6.0.3",
