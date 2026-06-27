@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/fscherf/boringjs/blob/master/README.md",
   "files": [
-    "src/**",
     "dist/**"
   ],
   "devDependencies": {
