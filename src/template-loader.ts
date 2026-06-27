@@ -13,6 +13,45 @@ export class BoringTemplateLoader {
     this.boring = boring;
   }
 
+  private resolveTemplateUrls = (
+    url: string,
+    templateElement: HTMLTemplateElement,
+  ) => {
+    // images
+    const imgElements = templateElement.content.querySelectorAll("img");
+
+    imgElements.forEach((element: Element) => {
+      let src: string = element.getAttribute("src") || "";
+
+      if (!src) {
+        return;
+      }
+
+      src = resolveUrl({
+        baseUrl: url,
+        templatingUrlPrefix: this.boring.config.templatingUrlPrefix,
+        relativeUrl: src,
+      });
+
+      element.setAttribute("src", src);
+    });
+  };
+
+  private generateTemplate = async (
+    url: string,
+    newDocument: Document,
+    template: string,
+  ) => {
+    const element: HTMLTemplateElement = document.createElement("template");
+
+    element.setAttribute("name", template);
+    element.innerHTML = newDocument.body.innerHTML;
+
+    this.resolveTemplateUrls(url, element);
+
+    document.body.appendChild(element);
+  };
+
   private loadLinkedStyles = async (url: string, newDocument: Document) => {
     const linkElements = newDocument.querySelectorAll("link[rel=stylesheet]");
 
@@ -130,7 +169,7 @@ export class BoringTemplateLoader {
     await Promise.all(scriptsLoaded);
   };
 
-  private loadTemplates = async (newDocument: Document) => {
+  private loadTemplates = async (url: string, newDocument: Document) => {
     const scriptElements = newDocument.querySelectorAll("template");
 
     scriptElements.forEach((element: HTMLTemplateElement) => {
@@ -152,20 +191,10 @@ export class BoringTemplateLoader {
       }
 
       // attach template to original document
+      this.resolveTemplateUrls(url, element);
+
       document.body.appendChild(element);
     });
-  };
-
-  private generateTemplate = async (
-    newDocument: Document,
-    template: string,
-  ) => {
-    const element: HTMLTemplateElement = document.createElement("template");
-
-    element.setAttribute("name", template);
-    element.innerHTML = newDocument.body.innerHTML;
-
-    document.body.appendChild(element);
   };
 
   private fetch = async (template: string) => {
@@ -241,11 +270,11 @@ export class BoringTemplateLoader {
       await this.loadLinkedStyles(url, newDocument);
       await this.loadStyles(newDocument);
       await this.loadScripts(url, newDocument);
-      await this.loadTemplates(newDocument);
+      await this.loadTemplates(url, newDocument);
 
       // create template from remaining HTML if not empty
       if (/\S/.test(newDocument.body.innerHTML)) {
-        this.generateTemplate(newDocument, template);
+        this.generateTemplate(url, newDocument, template);
       }
     } catch (error) {
       this.boring.dispatchEvent({
