@@ -5,77 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>boring.js</title>
+
+    <style>
+      #absolute-path-css::before {
+        content: "Loading CSS from absolute URLs does not work";
+        color: red;
+      }
+
+      #relative-path-css::before {
+        content: "Loading CSS from relative URLs does not work";
+        color: red;
+      }
+
+      #inline-css::before {
+        content: "Loading CSS from inline styles does not work";
+        color: red;
+      }
+    </style>
   </head>
   <body>
-    <main></main>
+    <div id="menu"></div>
 
-    <template name="index">
-      <h1>boring.js</h1>
-
-      {% include "greeting" %}
-      <ul>
-        <li><a href="/foo/">foo</a></li>
-        <li><a href="/bar/">bar</a></li>
-      </ul>
-
-      <form>
-        {% if value %}
-          <input id="name" value="{{ value }}">
-        {% else %}
-          <input id="name">
-        {% endif %}
-      </form>
-
-      <button onclick="boring.render('main')">Render</button>
-    </template>
-
-    <template name="foo">
-      <h1>foo</h1>
-    </template>
-
-    <template name="bar">
-      <h1>bar</h1>
-    </template>
+    <main id="main">
+      Loading...
+    </main>
 
     <template name="error-404">
-      <h1>404</h1>
+      <h1>Error 404</h1>
+      <p>Not Found</p>
     </template>
 
     <script src="/static/dist/boring.js"></script>
     <script>
       const context = {
         name: "World",
+        startupTime: (new Date()).toLocaleTimeString(),
       };
 
-      boring.addRegion("main", "main")
+      boring.addRegion("menu", "#menu", context);
+      boring.addRegion("main", "#main", context);
 
-      boring.addRoute("/foo", (params) => {
-        boring.render("main", "foo");
-      });
-
-      boring.addRoute("/bar", (params) => {
-        boring.render("main", "bar");
-      });
-
-      boring.addRoute("/", async (params) => {
-        await boring.render("main", "index");
+      // setup routes
+      boring.addRoute("/", (params) => {
+        boring.render("main", "index");
       }, "index");
 
-      boring.addRoute("/users/:user/about", async (params) => {
-        console.log(params);
-      }, "user");
+      boring.addRoute("/loading", async (params) => {
+        await boring.render("main", "loading/index");
 
-      // boring.addRoute("*path", (params) => {
-      //   boring.render("main", "error-404");
-      // });
+        try {
+          loadingLinkedAbsolutePathScriptFunction();
+        } catch(error) {
+          console.error(error);
+        }
 
+        try {
+          loadingLinkedRelativePathScriptFunction();
+        } catch(error) {
+          console.error(error);
+        }
+
+        try {
+          loadingInlineScriptFunction();
+        } catch(error) {
+          console.error(error);
+        }
+      }, "loading");
+
+      boring.addRoute("*path", (params) => {
+        boring.render("main", "error-404");
+      }, "fallback");
+
+      // log all boring events
       document.addEventListener("boring:event", event => {
         console.log(event.detail.event.type, event.detail.event.detail);
       }, true);
 
+      // fallback for non matching routes
+      // (this will not fire as long as the fallback route is in place)
       document.addEventListener("boring:routing-miss", async (event) => {
         await boring.render("main", "error-404");
       });
+
+      // initial render
+      boring.render("menu", "menu");
 
       boring.route();
     </script>

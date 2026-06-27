@@ -1,0 +1,4 @@
+#absolute-path-css::before {
+  content: "Loading CSS from absolute URLs works" !important;
+  color: inherit !important;
+}

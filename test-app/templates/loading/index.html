@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="/absolute-path.css">
+<link rel="stylesheet" href="./relative-path.css">
+
+<template name="loading/loaded-template">
+  <div id="templates">Loading templates works</div>
+</template>
+
+<style>
+  #inline-css::before {
+    content: "Loading CSS from inline styles works" !important;
+    color: inherit !important;
+  }
+</style>
+
+<h1>Loading</h1>
+
+{% include "loading/loaded-template" %}
+
+<!-- CSS -->
+<div id="absolute-path-css"></div>
+<div id="relative-path-css"></div>
+<div id="inline-css"></div>
+
+<!-- JS -->
+<div id="absolute-path-js" class="loading-error">
+  Loading JS from absolute URLs does not work
+</div>
+
+<div id="relative-path-js" class="loading-error">
+  Loading JS from relative URLs does not work
+</div>
+
+<div id="inline-js" class="loading-error">
+  Loading JS from inline scripts does not work
+</div>
+
+<!-- Images -->
+<div id="absolute-path-image" class="loading-error">
+  Loading images from absolute URLs does not work
+</div>
+
+<div id="relative-path-image" class="loading-error">
+  Loading images from relative URLs does not work
+</div>
+
+<img
+  src="/absolute-path.png"
+  style="display: none"
+  onload="loadingHandleAbsolutePathImageLoad()">
+
+<img
+  src="./relative-path.png"
+  style="display: none"
+  onload="loadingHandleRelativePathImageLoad()">
+
+<script src="/absolute-path.js"></script>
+<script src="./relative-path.js"></script>
+
+<script>
+  function loadingInlineScriptFunction() {
+    const element = document.querySelector("#inline-js");
+
+    element.classList.remove("loading-error");
+
+    element.innerHTML = "Loading JS from inline scripts works";
+  }
+
+  function loadingHandleAbsolutePathImageLoad() {
+    const element = document.querySelector("#absolute-path-image");
+
+    element.classList.remove("loading-error");
+
+    element.innerHTML = "Loading images from absolute URLs works";
+  }
+
+  function loadingHandleRelativePathImageLoad() {
+    const element = document.querySelector("#relative-path-image");
+
+    element.classList.remove("loading-error");
+
+    element.innerHTML = "Loading images from relative URLs works";
+  }
+</script>

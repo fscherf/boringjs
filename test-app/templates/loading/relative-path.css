@@ -1,0 +1,4 @@
+#relative-path-css::before {
+  content: "Loading CSS from relative URLs works" !important;
+  color: inherit !important;
+}
