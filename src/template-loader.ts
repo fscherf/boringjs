@@ -1,9 +1,8 @@
+import { resolveUrl, hashString } from "./utils";
 import { BoringError } from "./errors";
-import { hashString } from "./utils";
 import { Boring } from "./boring";
 
 export class BoringTemplateLoader {
-  // TODO: resolve relative paths to absolute paths
   // TODO: use boring.config.templatingNameAttributeName
   // TODO: use boring.config.loadingHashAttributeName
   // TODO: use boring.config.templatingNamePrefix
@@ -14,18 +13,27 @@ export class BoringTemplateLoader {
     this.boring = boring;
   }
 
-  private loadLinkedStyles = async (newDocument: Document) => {
+  private loadLinkedStyles = async (url: string, newDocument: Document) => {
     const linkElements = newDocument.querySelectorAll("link[rel=stylesheet]");
 
     linkElements.forEach((element: Element) => {
       element.remove();
 
       // check if href is set
-      const href: string = element.getAttribute("href") || "";
+      let href: string = element.getAttribute("href") || "";
 
       if (!href) {
         return;
       }
+
+      // resolve relative URLs
+      href = resolveUrl({
+        baseUrl: url,
+        templatingUrlPrefix: this.boring.config.templatingUrlPrefix,
+        relativeUrl: href,
+      });
+
+      element.setAttribute("href", href);
 
       // check if linked style is already loaded
       const selector: string = `link[href="${href}"]`;
@@ -58,7 +66,7 @@ export class BoringTemplateLoader {
     });
   };
 
-  private loadScripts = async (newDocument: Document) => {
+  private loadScripts = async (url: string, newDocument: Document) => {
     const scriptElements = newDocument.querySelectorAll("script");
     const scriptsLoaded = new Array();
 
@@ -66,17 +74,24 @@ export class BoringTemplateLoader {
       element.remove();
 
       // check if script is already loaded
-      const scriptSrc: string = element.getAttribute("src") || "";
+      let src: string = element.getAttribute("src") || "";
       let hash: string = "";
       let selector: string = "";
 
-      if (scriptSrc) {
-        selector = `script[src="${scriptSrc}"]`;
+      if (src) {
+        src = resolveUrl({
+          baseUrl: url,
+          templatingUrlPrefix: this.boring.config.templatingUrlPrefix,
+          relativeUrl: src,
+        });
+
+        selector = `script[src="${src}"]`;
       } else {
         hash = hashString(element.textContent);
         selector = `script[hash="${hash}"]`;
       }
 
+      // check if script is already loaded
       if (document.querySelector(selector)) {
         return;
       }
@@ -85,12 +100,16 @@ export class BoringTemplateLoader {
       // We need to create a new element so our original document will run it.
       const newElement: HTMLScriptElement = document.createElement("script");
 
-      if (hash) {
-        newElement.setAttribute("hash", hash);
-      }
-
       for (const attribute of element.attributes) {
         newElement.setAttribute(attribute.name, attribute.value);
+      }
+
+      if (src) {
+        newElement.setAttribute("src", src);
+      }
+
+      if (hash) {
+        newElement.setAttribute("hash", hash);
       }
 
       if (!element.src) {
