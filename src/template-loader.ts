@@ -238,10 +238,10 @@ export class BoringTemplateLoader {
       const newDocument = domParser.parseFromString(html, "text/html");
 
       // load HTML parts
-      this.loadLinkedStyles(newDocument);
-      this.loadStyles(newDocument);
-      this.loadScripts(newDocument);
-      this.loadTemplates(newDocument);
+      await this.loadLinkedStyles(url, newDocument);
+      await this.loadStyles(newDocument);
+      await this.loadScripts(url, newDocument);
+      await this.loadTemplates(newDocument);
 
       // create template from remaining HTML if not empty
       if (/\S/.test(newDocument.body.innerHTML)) {
