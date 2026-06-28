@@ -191,7 +191,6 @@ export class Boring {
     //   after-render
     //   render-error
 
-    // TODO: use config.renderingIgnoreAttributeName
     const region: BoringRegion = this.getRegion(regionName);
 
     // dispatch before-render event
@@ -245,6 +244,11 @@ export class Boring {
         childrenOnly: true,
 
         onBeforeElUpdated: (fromEl: HTMLElement, toEl: HTMLElement) => {
+          // Ignore elements that are flagged to be ignored.
+          if (fromEl.hasAttribute(this.config.renderingIgnoreAttributeName)) {
+            return false;
+          }
+
           // Preserve the value of `fromEl` if both elements are form elements
           // and the new form element does not explicitly set a new value.
 
