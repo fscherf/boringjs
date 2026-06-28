@@ -3,8 +3,6 @@ import { BoringError } from "./errors";
 import { Boring } from "./boring";
 
 export class BoringTemplateLoader {
-  // TODO: use boring.config.templatingNamePrefix
-
   public boring: Boring;
 
   constructor(boring: Boring) {

@@ -22,7 +22,6 @@ declare global {
 type BoringConfig = {
   loadingHashAttributeName: string;
   templatingUrlPrefix: string;
-  templatingNamePrefix: string;
   templatingNameAttributeName: string;
   renderingIgnoreAttributeName: string;
 };
@@ -48,7 +47,6 @@ export class Boring {
     this.config = {
       loadingHashAttributeName: "hash",
       templatingUrlPrefix: "/templates/",
-      templatingNamePrefix: "",
       templatingNameAttributeName: "name",
       renderingIgnoreAttributeName: "boring-ignore",
     };
