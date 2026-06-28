@@ -7,6 +7,7 @@ import {
   BoringRouteCallback,
   BoringRouteParams,
 } from "./routing";
+
 import { BoringTemplateLoader } from "./template-loader";
 import { BoringNunjucksLoader } from "./templating";
 import { BoringError } from "./errors";
