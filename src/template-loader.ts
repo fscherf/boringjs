@@ -266,7 +266,7 @@ export class BoringTemplateLoader {
     //   before-template-load
     //   after-template-load
 
-    const templateSelector: string = `template[name=${template}]`;
+    const templateSelector: string = `template[name="${template}"]`;
     let templateElement: HTMLTemplateElement | null;
 
     this.boring.dispatchEvent({
