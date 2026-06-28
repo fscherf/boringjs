@@ -3,8 +3,6 @@ import { BoringError } from "./errors";
 import { Boring } from "./boring";
 
 export class BoringTemplateLoader {
-  // TODO: use boring.config.templatingNameAttributeName
-  // TODO: use boring.config.loadingHashAttributeName
   // TODO: use boring.config.templatingNamePrefix
 
   public boring: Boring;
@@ -44,7 +42,11 @@ export class BoringTemplateLoader {
   ) => {
     const element: HTMLTemplateElement = document.createElement("template");
 
-    element.setAttribute("name", template);
+    element.setAttribute(
+      this.boring.config.templatingNameAttributeName,
+      template,
+    );
+
     element.innerHTML = newDocument.body.innerHTML;
 
     this.resolveTemplateUrls(url, element);
@@ -93,7 +95,7 @@ export class BoringTemplateLoader {
       element.remove();
 
       const hash: string = hashString(element.innerHTML);
-      const selector: string = `style[hash="${hash}"]`;
+      const selector: string = `style[${this.boring.config.loadingHashAttributeName}="${hash}"]`;
 
       // check if style is already loaded
       if (document.querySelector(selector)) {
@@ -101,6 +103,8 @@ export class BoringTemplateLoader {
       }
 
       // attach template to original document
+      element.setAttribute(this.boring.config.loadingHashAttributeName, hash);
+
       document.head.appendChild(element);
     });
   };
@@ -127,7 +131,7 @@ export class BoringTemplateLoader {
         selector = `script[src="${src}"]`;
       } else {
         hash = hashString(element.textContent);
-        selector = `script[hash="${hash}"]`;
+        selector = `script[${this.boring.config.loadingHashAttributeName}="${hash}"]`;
       }
 
       // check if script is already loaded
@@ -148,7 +152,10 @@ export class BoringTemplateLoader {
       }
 
       if (hash) {
-        newElement.setAttribute("hash", hash);
+        newElement.setAttribute(
+          this.boring.config.loadingHashAttributeName,
+          hash,
+        );
       }
 
       if (!element.src) {
@@ -175,7 +182,9 @@ export class BoringTemplateLoader {
     scriptElements.forEach((element: HTMLTemplateElement) => {
       // Check if the template has a name set. If not, we just leave it in the
       // document because it could be used by a 3rd party library.
-      const name: string = element.getAttribute("name") || "";
+      const name: string =
+        element.getAttribute(this.boring.config.templatingNameAttributeName) ||
+        "";
 
       if (!name) {
         return;
@@ -184,7 +193,7 @@ export class BoringTemplateLoader {
       element.remove();
 
       // check if template with this name already exists
-      const selector: string = `template[name="${name}"]`;
+      const selector: string = `template[${this.boring.config.templatingNameAttributeName}="${name}"]`;
 
       if (document.querySelector(selector)) {
         return;
@@ -295,7 +304,7 @@ export class BoringTemplateLoader {
     //   before-template-load
     //   after-template-load
 
-    const templateSelector: string = `template[name="${template}"]`;
+    const templateSelector: string = `template[${this.boring.config.templatingNameAttributeName}="${template}"]`;
     let templateElement: HTMLTemplateElement | null;
 
     this.boring.dispatchEvent({
