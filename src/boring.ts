@@ -29,7 +29,7 @@ type BoringConfig = {
 type BoringRegion = {
   element: HTMLElement;
   templateName?: string;
-  context: object;
+  context: Record<any, any>;
 };
 
 export class Boring {
@@ -212,6 +212,9 @@ export class Boring {
       // update region state
       region.templateName = templateName || region.templateName;
       region.context = context || region.context;
+
+      // make sure the boring namespace is always available in any context
+      region.context.boring = this;
 
       if (region.templateName === undefined) {
         throw new BoringError("no template set");
