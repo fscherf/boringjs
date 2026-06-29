@@ -1,6 +1,6 @@
 {
   "name": "boringjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "boring.js",
   "main": "dist/boring.js",
   "types": "dist/boring.d.ts",
