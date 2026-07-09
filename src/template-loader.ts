@@ -159,9 +159,20 @@ export class BoringTemplateLoader {
       if (!element.src) {
         newElement.textContent = element.textContent;
       } else {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise((resolve, reject) => {
           newElement.addEventListener("load", () => {
             resolve(null);
+          });
+
+          newElement.addEventListener("error", () => {
+            // We need to remove the invalid script so loading it will not
+            // silents fail if another template attempts to load it.
+            newElement.remove();
+
+            // We throw an error here but not when loading styles or images
+            // because scripts failing to load can result in incorrect
+            // app behavior.
+            reject(new BoringError(`failed to load script: ${src}`));
           });
         });
 
