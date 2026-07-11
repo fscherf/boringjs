@@ -532,14 +532,14 @@ export class Boring {
     });
   };
 
-  public getUrl = (routeName: string, params: BoringRouteParams): string => {
+  public getUrl = (routeName: string, params?: BoringRouteParams): string => {
     const route: BoringRoute | undefined = this.routesByName.get(routeName);
 
     if (!route) {
       throw new BoringError(`Unknown route '${routeName}'`);
     }
 
-    return route.toPath(params);
+    return route.toPath(params || {});
   };
 }
 
