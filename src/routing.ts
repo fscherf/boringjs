@@ -7,12 +7,10 @@ import {
 } from "path-to-regexp";
 
 import { BoringError } from "./errors";
+import { BoringRequest } from "./boring";
 
 export type BoringRouteParams = Record<string, any>;
-export type BoringRouteCallback = (
-  params: BoringRouteParams,
-  navigateEvent?: NavigateEvent,
-) => any;
+export type BoringRouteCallback = (request: BoringRequest) => any;
 
 export type BoringMatchResult = {
   path: string;

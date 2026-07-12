@@ -32,6 +32,15 @@ type BoringRegion = {
   context: Record<any, any>;
 };
 
+export type BoringRequest = {
+  url: URL;
+  params: Record<string, string>;
+  method: "GET" | "POST";
+  GET: URLSearchParams;
+  POST: FormData;
+  navigateEvent?: NavigateEvent;
+};
+
 export class Boring {
   private nunjucksEnv: nunjucks.Environment;
   private templateLoader: BoringTemplateLoader;
@@ -353,8 +362,13 @@ export class Boring {
     //  - after-routing
     //  - routing-error
 
-    if (!path) {
-      path = window.location.pathname;
+    // resolve the requested URL
+    let url: URL;
+
+    if (navigateEvent) {
+      url = new URL(navigateEvent.destination.url);
+    } else {
+      url = new URL(path || window.location.href, window.location.origin);
     }
 
     // dispatch `before-routing`
@@ -363,7 +377,7 @@ export class Boring {
       name: "before-routing",
       cancelable: true,
       detail: {
-        path: path,
+        path: url.pathname,
         navigateEvent: navigateEvent,
       },
     });
@@ -375,7 +389,7 @@ export class Boring {
     // search for matching route if necessary
     if (!matchingRoute) {
       for (const route of this.routes) {
-        matchResult = route.match(path);
+        matchResult = route.match(url.pathname);
 
         if (matchResult) {
           matchingRoute = route;
@@ -392,7 +406,7 @@ export class Boring {
         name: "routing-hit",
         cancelable: false,
         detail: {
-          path: path,
+          path: url.pathname,
           navigateEvent: navigateEvent,
           routePathPattern: matchingRoute.pathPattern,
           routeCallback: matchingRoute.callback,
@@ -400,10 +414,19 @@ export class Boring {
         },
       });
 
-      // run callback
       try {
-        const params = matchResult || {};
-        const returnValue = matchingRoute.callback(params, navigateEvent);
+        // setup request object
+        const request: BoringRequest = {
+          url: url,
+          params: matchResult?.params || {},
+          method: navigateEvent?.formData ? "POST" : "GET",
+          GET: url.searchParams,
+          POST: navigateEvent?.formData || new FormData(),
+          navigateEvent: navigateEvent,
+        };
+
+        // run route callback
+        const returnValue = matchingRoute.callback(request);
 
         if (returnValue instanceof Promise) {
           await returnValue;
@@ -413,7 +436,7 @@ export class Boring {
           name: "routing-error",
           cancelable: false,
           detail: {
-            path: path,
+            path: url.pathname,
             navigateEvent: navigateEvent,
             routePathPattern: matchingRoute.pathPattern,
             routeCallback: matchingRoute.callback,
@@ -441,7 +464,7 @@ export class Boring {
         name: "routing-miss",
         cancelable: false,
         detail: {
-          path: path,
+          path: url.pathname,
           navigateEvent: navigateEvent,
         },
       });
@@ -452,7 +475,7 @@ export class Boring {
       name: "after-routing",
       cancelable: false,
       detail: {
-        path: path,
+        path: url.pathname,
         navigateEvent: navigateEvent,
       },
     });
@@ -503,7 +526,7 @@ export class Boring {
 
       event.intercept({
         handler: async () => {
-          await this.route(path, event, matchingRoute);
+          await this.route(path, event, matchingRoute, matchResult);
         },
       });
     });
