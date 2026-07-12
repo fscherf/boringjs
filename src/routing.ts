@@ -10,7 +10,7 @@ import { BoringError } from "./errors";
 import { BoringRequest } from "./boring";
 
 export type BoringRouteParams = Record<string, any>;
-export type BoringRouteCallback = (request: BoringRequest) => any;
+export type BoringRouteView = (request: BoringRequest) => any;
 
 export type BoringMatchResult = {
   path: string;
@@ -19,19 +19,15 @@ export type BoringMatchResult = {
 
 export class BoringRoute {
   public pathPattern: string;
-  public callback: BoringRouteCallback;
+  public view: BoringRouteView;
   public name: string | undefined;
 
   private _match: MatchFunction<BoringRouteParams>;
   private _toPath: PathFunction<BoringRouteParams>;
 
-  constructor(
-    pathPattern: string,
-    callback: BoringRouteCallback,
-    name?: string,
-  ) {
+  constructor(pathPattern: string, view: BoringRouteView, name?: string) {
     this.pathPattern = pathPattern;
-    this.callback = callback;
+    this.view = view;
     this.name = name;
 
     try {

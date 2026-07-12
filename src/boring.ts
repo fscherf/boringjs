@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import {
   BoringRoute,
   BoringMatchResult,
-  BoringRouteCallback,
+  BoringRouteView,
   BoringRouteParams,
 } from "./routing";
 
@@ -409,8 +409,8 @@ export class Boring {
           path: url.pathname,
           navigateEvent: navigateEvent,
           routePathPattern: matchingRoute.pathPattern,
-          routeCallback: matchingRoute.callback,
           routeName: matchingRoute.name,
+          view: matchingRoute.view,
         },
       });
 
@@ -425,8 +425,8 @@ export class Boring {
           navigateEvent: navigateEvent,
         };
 
-        // run route callback
-        const returnValue = matchingRoute.callback(request);
+        // run view
+        const returnValue = matchingRoute.view(request);
 
         if (returnValue instanceof Promise) {
           await returnValue;
@@ -439,8 +439,8 @@ export class Boring {
             path: url.pathname,
             navigateEvent: navigateEvent,
             routePathPattern: matchingRoute.pathPattern,
-            routeCallback: matchingRoute.callback,
             routeName: matchingRoute.name,
+            view: matchingRoute.view,
             error: error,
           },
         });
@@ -449,7 +449,7 @@ export class Boring {
           matchingRoute.name || matchingRoute.pathPattern;
 
         throw new BoringError(
-          `error thrown while running callback for ${routeIdentifier}`,
+          `error thrown while running view for ${routeIdentifier}`,
           {
             cause: error,
           },
@@ -488,10 +488,10 @@ export class Boring {
 
   public addRoute = (
     pathPattern: string,
-    callback: BoringRouteCallback,
+    view: BoringRouteView,
     name?: string,
   ) => {
-    const route: BoringRoute = new BoringRoute(pathPattern, callback, name);
+    const route: BoringRoute = new BoringRoute(pathPattern, view, name);
 
     this.routes.push(route);
 
