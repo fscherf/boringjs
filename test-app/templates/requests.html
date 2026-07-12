@@ -1,0 +1,95 @@
+<h1>Requests</h1>
+
+<table class="attribute-table">
+  <tr>
+    <th>Method:</th>
+    <td id="method">{{ request.method }}</td>
+  </tr>
+  <tr>
+    <th>URL:</th>
+    <td id="url">{{ request.url }}</td>
+  </tr>
+  <tr>
+    <th>URL pathname:</th>
+    <td id="url-pathname">{{ request.url.pathname }}</td>
+  </tr>
+  <tr>
+    <th>Param A:</th>
+    <td id="params-a">{{ request.params.a }}</td>
+  </tr>
+  <tr>
+    <th>Param B:</th>
+    <td id="params-b">{{ request.params.b }}</td>
+  </tr>
+  <tr>
+    <th>GET A:</th>
+    <td id="get-a">{{ request.GET.get('a') }}</td>
+  </tr>
+  <tr>
+    <th>GET B:</th>
+    <td id="get-b">{{ request.GET.get('b') }}</td>
+  </tr>
+  <tr>
+    <th>POST A:</th>
+    <td id="post-a">{{ request.POST.get('a') }}</td>
+  </tr>
+  <tr>
+    <th>POST B:</th>
+    <td id="post-b">{{ request.POST.get('b') }}</td>
+  </tr>
+</table>
+
+
+<h2>Params</h2>
+<ul>
+  <li>
+    <a id="params-none" href="{{ boring.getUrl('requests') }}">
+      None
+    </a>
+  </li>
+  <li>
+    <a id="params-foo-bar" href="{{ boring.getUrl('requests_with_params', {a: 'Foo', b: 'Bar'}) }}">
+      a: Foo, b: Bar
+    </a>
+  </li>
+</ul>
+
+
+<h2>GET Forms</h2>
+
+<form id="get-form" action="." method="get">
+  <label for="a">A:</label>
+  <input type="text" name="a" value="{{ request.GET.get('a') }}">
+  <br/>
+
+  <label for="b">B:</label>
+  <input type="text" name="b" value="{{ request.GET.get('b') }}">
+  <br/>
+
+  <br/>
+  <input id="get-form-submit" type="submit" value="Submit">
+</form>
+
+<button onclick="document.querySelector('#get-form').requestSubmit()">
+  form.requestSubmit()
+</button>
+
+
+<h2>POST Forms</h2>
+
+<form id="post-form" action="{{ boring.getUrl('requests') }}" method="post">
+  <label for="a">A:</label>
+  <input type="text" name="a" value="{{ request.POST.get('a') }}">
+  <br/>
+
+  <label for="b">B:</label>
+  <input type="text" name="b" value="{{ request.POST.get('b') }}">
+  <br/>
+
+  <br/>
+  <input id="post-form-submit" type="submit" value="Submit">
+</form>
+
+<button onclick="document.querySelector('#post-form').requestSubmit()">
+  form.requestSubmit()
+</button>

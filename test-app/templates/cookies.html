@@ -1,0 +1,28 @@
+<h1>Cookies</h1>
+
+<form id="cookies-form" onSubmit="cookiesUpdate(event)">
+  <label for="a">A:</label>
+  <input type="text" name="a" value="{{ boring.cookies.get('a') }}">
+  <br/>
+
+  <label for="b">B:</label>
+  <input type="text" name="b" value="{{ boring.cookies.get('b') }}">
+  <br/>
+
+  <br/>
+  <input id="get-form-submit" type="submit" value="Update">
+</form>
+
+<script>
+  function cookiesUpdate(event) {
+    event.preventDefault();
+
+    const a = document.querySelector("#cookies-form input[name=a]").value;
+    const b = document.querySelector("#cookies-form input[name=b]").value;
+
+    boring.cookies.set("a", a);
+    boring.cookies.set("b", b);
+
+    boring.render("main");
+  }
+</script>

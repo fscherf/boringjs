@@ -1,11 +1,26 @@
 <link rel="stylesheet" href="./main.css">
 
-<h2>boring.js Test Project</h2>
+<h2>boring.js Test App</h2>
 <h3>App Startup: {{ startupTime }}</h3>
 
-<ul>
-  <li><a href="{{ boring.getUrl('index') }}">Index</a></li>
-  <li><a href="{{ boring.getUrl('loading') }}">Loading</a></li>
+<ul id="menu">
+  <li><a id="menu-index" href="{{ boring.getUrl('index') }}">Index</a></li>
+  <li><a id="menu-loading" href="{{ boring.getUrl('loading') }}">Loading</a></li>
+  <li><a id="menu-requests" href="{{ boring.getUrl('requests') }}">Requests</a></li>
+  <li><a id="menu-rendering" href="{{ boring.getUrl('rendering') }}">Rendering</a></li>
+  <li><a id="menu-cookies" href="{{ boring.getUrl('cookies') }}">Cookies</a></li>
+
+  <li>
+    Errors
+    <ul>
+      <li><a id="menu-errors-views" href="{{ boring.getUrl('errors__views') }}">Views</a></li>
+      <li><a id="menu-errors-async-views" href="{{ boring.getUrl('errors__async_views') }}">Async Views</a></li>
+      <li><a id="menu-errors-template-loading" href="{{ boring.getUrl('errors__template_loading') }}">Template Loading</a></li>
+      <li><a id="menu-errors-script-loading" href="{{ boring.getUrl('errors__script_loading') }}">Script Loading</a></li>
+      <li><a id="menu-errors-invalid-template" href="{{ boring.getUrl('errors__invalid_template') }}">Invalid Template</a></li>
+      <li><a id="menu-errors-templating" href="{{ boring.getUrl('errors__templating') }}">Templating</a></li>
+    </ul>
+  </li>
 </ul>
 
 <hr/>

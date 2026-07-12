@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>boring.js</title>
+    <title>boring.js Test App</title>
 
     <style>
       #absolute-path-css::before {
@@ -20,6 +20,25 @@
       #inline-css::before {
         content: "Loading CSS from inline styles does not work";
         color: red;
+      }
+
+      /* attribute table */
+      .attribute-table {
+        border: 1px solid lightgrey;
+      }
+
+      .attribute-table th {
+        text-align: left;
+        padding-right: 1em;
+      }
+
+      .attribute-table tr:nth-child(odd) {
+        background-color: lightgrey;
+      }
+
+      .attribute-table th,
+      .attribute-table td, {
+        vertical-align: top;
       }
     </style>
   </head>
@@ -37,20 +56,29 @@
 
     <script src="/static/dist/boring.js"></script>
     <script>
+      function getTimestamp() {
+        const currentDate = new Date()
+
+        return `${currentDate.toTimeString().slice(0, 8)}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
+      }
+
       const context = {
-        name: "World",
-        startupTime: (new Date()).toLocaleTimeString(),
+        startupTime: getTimestamp(),
+        rendering: {
+          counter: 0,
+        },
       };
 
       boring.addRegion("menu", "#menu", context);
       boring.addRegion("main", "#main", context);
 
-      // setup routes
-      boring.addRoute("/", (params) => {
+      // route: /
+      boring.addRoute("/", (request) => {
         boring.render("main", "index");
       }, "index");
 
-      boring.addRoute("/loading", async (params) => {
+      // route: /loading/
+      boring.addRoute("/loading/", async (request) => {
         await boring.render("main", "loading/index");
 
         try {
@@ -72,12 +100,88 @@
         }
       }, "loading");
 
-      boring.addRoute("*path", (params) => {
+      // route: /requests/
+      boring.addRoute("/requests/a/:a/b/:b/", (request) => {
+        const context = boring.getContext("main");
+
+        context.request = request;
+
+        boring.render("main", "requests");
+      }, "requests_with_params");
+
+      boring.addRoute("/requests/", (request) => {
+        const context = boring.getContext("main");
+
+        context.request = request;
+
+        boring.render("main", "requests");
+      }, "requests");
+
+      // route: /rendering/
+      boring.addRoute("/rendering/", (request) => {
+        boring.render("main", "rendering");
+      }, "rendering");
+
+      // route: /cookies/
+      boring.addRoute("/cookies/", (request) => {
+        boring.render("main", "cookies");
+      }, "cookies");
+
+      // route: /errors/views/
+      boring.addRoute("/errors/views/", (request) => {
+        throw("View crashed");
+      }, "errors__views");
+
+      // route: /errors/async-views/
+      boring.addRoute("/errors/async-views/", async (request) => {
+        throw("async view crashed");
+      }, "errors__async_views");
+
+      // route: /errors/template-loading/
+      boring.addRoute("/errors/template-loading/", (request) => {
+        boring.render("main", "errors/template-loading");
+      }, "errors__template_loading");
+
+      // route: /errors/script-loading/
+      boring.addRoute("/errors/script-loading/", (request) => {
+        boring.render("main", "errors/script-loading");
+      }, "errors__script_loading");
+
+      // route: /errors/invalid-template/
+      boring.addRoute("/errors/invalid-template/", (request) => {
+        boring.render("main", "errors/invalid-template");
+      }, "errors__invalid_template");
+
+      // route: /errors/templating/
+      boring.addRoute("/errors/templating/", (request) => {
+        boring.render("main", "errors/templating");
+      }, "errors__templating");
+
+      // route: 404
+      boring.addRoute("*path", (request) => {
         boring.render("main", "error-404");
       }, "fallback");
 
+      // event: routing-error
+      document.addEventListener("boring:routing-error", (event) => {
+        const context = boring.getContext("main");
+
+        context.error = event.detail.error;
+
+        boring.render("main", "error");
+      });
+
+      // event: render-error
+      document.addEventListener("boring:render-error", (event) => {
+        const context = boring.getContext("main");
+
+        context.error = event.detail.error;
+
+        boring.render("main", "error");
+      });
+
       // log all boring events
-      document.addEventListener("boring:event", event => {
+      document.addEventListener("boring:event", (event) => {
         console.log(event.detail.event.type, event.detail.event.detail);
       }, true);
 

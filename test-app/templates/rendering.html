@@ -1,0 +1,61 @@
+<h1>Rendering</h1>
+
+<h2>Counter</h2>
+<div>
+  <button onclick="renderingDecCounter()">-</button>
+  <strong>{{ rendering.counter }}</strong>
+  <button onclick="renderingIncCounter()">+</button>
+</div>
+
+<h2>Custom Rendering Counter</h2>
+<div id="custom-rendering-counter" boring-ignore>
+  <button onclick="customRenderingDecCounter()">-</button>
+  <strong>0</strong>
+  <button onclick="customRenderingIncCounter()">+</button>
+</div>
+
+<script>
+  // standard rendering
+  function renderingDecCounter() {
+    const context = boring.getContext("main");
+
+    context.rendering.counter -= 1;
+
+    boring.render("main");
+  }
+
+  function renderingIncCounter() {
+    const context = boring.getContext("main");
+
+    context.rendering.counter += 1;
+
+    boring.render("main");
+  }
+
+  // custom rendering
+  function getCustomRenderingCounterValue() {
+    return parseInt(
+      document.querySelector(
+        "#custom-rendering-counter strong",
+      ).textContent
+    );
+  }
+
+  function setCustomRenderingCounterValue(value) {
+    document.querySelector(
+      "#custom-rendering-counter strong",
+    ).innerHTML = value;
+  }
+
+  function customRenderingDecCounter() {
+    let counterValue = getCustomRenderingCounterValue();
+
+    setCustomRenderingCounterValue(counterValue - 1);
+  }
+
+  function customRenderingIncCounter() {
+    let counterValue = getCustomRenderingCounterValue();
+
+    setCustomRenderingCounterValue(counterValue + 1);
+  }
+</script>
