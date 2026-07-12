@@ -41,7 +41,7 @@ export class Boring {
   public routes: Array<BoringRoute>;
   public routesByName: Map<string, BoringRoute>;
 
-  public cookies: any = Cookies;
+  public cookies = Cookies;
 
   constructor() {
     this.config = {
